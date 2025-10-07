@@ -1,0 +1,135 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>💸 Expense Tracker (Live)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --background: #f9fafb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --border-radius: 12px;
+    }
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background: var(--background);
+      color: var(--text);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    header {
+      background: var(--primary);
+      color: white;
+      padding: 1rem;
+      width: 100%;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+    .container {
+      width: 100%;
+      max-width: 500px;
+      margin-top: 1rem;
+      padding: 1rem;
+    }
+    .card {
+      background: var(--card);
+      padding: 1rem;
+      border-radius: var(--border-radius);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      margin-bottom: 1rem;
+    }
+    form input, form select, form button {
+      width: 100%;
+      padding: 0.7rem;
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: var(--border-radius);
+      font-size: 1rem;
+    }
+    form button {
+      background: var(--primary);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    form button:hover {
+      background: #3730a3;
+    }
+    .message {
+      text-align: center;
+      margin-top: 0.5rem;
+      font-weight: bold;
+    }
+    .success { color: green; }
+    .error { color: red; }
+  </style>
+</head>
+<body>
+  <header>💰 Expense Tracker (Live)</header>
+
+  <div class="container">
+    <div class="card">
+      <form id="expense-form">
+        <input type="number" id="amount" placeholder="Amount (₹)" required>
+        <select id="category" required>
+          <option value="">Select Category</option>
+          <option>Food</option>
+          <option>Travel</option>
+          <option>Shopping</option>
+          <option>Bills</option>
+          <option>Entertainment</option>
+          <option>Other</option>
+        </select>
+        <input type="text" id="description" placeholder="About the expense" required>
+        <input type="date" id="date" required>
+        <button type="submit">➕ Add Expense</button>
+      </form>
+      <div id="message" class="message"></div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('expense-form');
+    const messageBox = document.getElementById('message');
+
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx7YMATYFW2lu37ZP1cyTQ3p3arB6dpIorkVlr199LAMbn6egPYEeRHYWZXzGki9zTgyg/exec"; // 👈 Replace with your Google Apps Script URL
+
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+
+      const data = {
+        amount: document.getElementById('amount').value,
+        category: document.getElementById('category').value,
+        description: document.getElementById('description').value,
+        date: document.getElementById('date').value
+      };
+
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      .then(() => {
+        messageBox.textContent = '✅ Expense Saved to Google Sheets!';
+        messageBox.className = 'message success';
+        form.reset();
+      })
+      .catch(() => {
+        messageBox.textContent = '❌ Failed to save. Check your URL or network.';
+        messageBox.className = 'message error';
+      });
+    });
+  </script>
+</body>
+</html>
